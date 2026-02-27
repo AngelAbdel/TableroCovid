@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly as px
 
 # Cargar datos
 df = pd.read_csv("CovidDB.csv")
