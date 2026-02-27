@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import numpy as np
+import time
 
 # Cargar datos
 df = pd.read_csv("CovidDB.csv")
@@ -90,3 +92,26 @@ fig_bubble.update_layout(
 )
 
 st.plotly_chart(fig_bubble)
+
+# --- Visualización 4: Monitoreo en tiempo real ---
+st.header("Monitoreo en tiempo real")
+
+# Inicializar dataset en sesión
+if "data" not in st.session_state:
+    st.session_state.data = pd.DataFrame(columns=["Tiempo", "Casos"])
+
+# Generar un nuevo dato simulado
+nuevo_dato = {
+    "Tiempo": pd.Timestamp.now(),
+    "Casos": np.random.randint(1000, 5000)  # valor aleatorio simulado
+}
+st.session_state.data = pd.concat([st.session_state.data, pd.DataFrame([nuevo_dato])])
+
+# Mostrar KPI
+st.metric("Casos actuales", nuevo_dato["Casos"])
+
+# Mostrar gráfico de serie de tiempo
+st.line_chart(st.session_state.data.set_index("Tiempo"))
+
+# Refrescar cada 5 segundos
+st.experimental_autorefresh(interval=5000, limit=None, key="refresh")
