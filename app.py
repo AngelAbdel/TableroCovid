@@ -114,4 +114,6 @@ st.metric("Casos actuales", nuevo_dato["Casos"])
 st.line_chart(st.session_state.data.set_index("Tiempo"))
 
 # Refrescar cada 5 segundos
-st.experimental_autorefresh(interval=5000, limit=None, key="refresh")
+from streamlit_autorefresh import st_autorefresh
+
+st_autorefresh(interval=5000, limit=None, key="refresh")
