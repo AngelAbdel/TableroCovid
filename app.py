@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import numpy as np
 import time
+from streamlit_autorefresh import st_autorefresh
 
 # Cargar datos
 df = pd.read_csv("CovidDB.csv")
@@ -114,6 +115,4 @@ st.metric("Casos actuales", nuevo_dato["Casos"])
 st.line_chart(st.session_state.data.set_index("Tiempo"))
 
 # Refrescar cada 5 segundos
-from streamlit_autorefresh import st_autorefresh
-
 st_autorefresh(interval=5000, limit=None, key="refresh")
