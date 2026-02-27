@@ -4,7 +4,7 @@ import plotly.express as px
 
 
 # Cargar dataset
-df = pd.read_csv("covid_dataset.csv")
+df = pd.read_csv("CovidDB.csv")
 
 # Título del tablero
 st.title("Proyecto Final - Tablero Interactivo de COVID-19")
