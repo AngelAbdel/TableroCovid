@@ -2,48 +2,51 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-
-# Cargar dataset
+# Cargar datos
 df = pd.read_csv("CovidDB.csv")
 
-# Título del tablero
-st.title("Proyecto Final - Tablero Interactivo de COVID-19")
+st.title("Tablero Interactivo COVID-19")
 
-# Introducción breve
-st.markdown("""
-Este tablero permite analizar la evolución de la pandemia de COVID-19
-por país, región y grupo poblacional. Se pueden explorar contagios,
-defunciones, recuperaciones y saturación hospitalaria.
-""")
+# --- Visualización 1: Mapa geoespacial ---
+st.subheader("Mapa geoespacial de casos")
+# Supongamos que tu dataset tiene columnas: 'lat', 'lon', 'casos'
+fig_map = px.scatter_mapbox(
+    df,
+    lat="lat",
+    lon="lon",
+    size="casos",
+    color="casos",
+    hover_name="municipio",
+    mapbox_style="carto-positron",
+    zoom=4,
+    title="Distribución geográfica de casos"
+)
+st.plotly_chart(fig_map)
 
-# Filtro por país
-countries = df["country"].unique()
-selected_country = st.selectbox("Selecciona un país:", countries)
+# --- Visualización 2: Heatmap temporal ---
+st.subheader("Mapa de calor temporal")
+# Supongamos que tienes columnas: 'fecha' y 'casos'
+df_heat = df.groupby("fecha")["casos"].sum().reset_index()
+fig_heat = px.density_heatmap(
+    df_heat,
+    x="fecha",
+    y="casos",
+    nbinsx=30,
+    nbinsy=20,
+    title="Patrones temporales de contagios"
+)
+st.plotly_chart(fig_heat)
 
-# Filtrar datos por país
-filtered_df = df[df["country"] == selected_country]
-
-# Gráfico de casos en el tiempo
-fig_cases = px.line(filtered_df, x="date", y="cases",
-                    title=f"Casos confirmados en {selected_country}")
-st.plotly_chart(fig_cases)
-
-# Gráfico de defunciones vs recuperados
-fig_outcomes = px.bar(filtered_df, x="date", y=["deaths", "recovered"],
-                      title=f"Defunciones y Recuperados en {selected_country}")
-st.plotly_chart(fig_outcomes)
-
-# Distribución por edad
-fig_age = px.histogram(filtered_df, x="age", nbins=20,
-                       title=f"Distribución de edades en {selected_country}")
-st.plotly_chart(fig_age)
-
-# Ocupación hospitalaria
-fig_beds = px.line(filtered_df, x="date", y="beds_occupied",
-                   title=f"Ocupación hospitalaria en {selected_country}")
-st.plotly_chart(fig_beds)
-
-# Comparación por regiones dentro del país
-fig_region = px.box(filtered_df, x="region", y="cases",
-                    title=f"Casos por región en {selected_country}")
-st.plotly_chart(fig_region)
+# --- Visualización 3: Bubble chart ---
+st.subheader("Gráfico de burbujas")
+# Supongamos que tienes columnas: 'grupo_edad', 'casos', 'muertes'
+fig_bubble = px.scatter(
+    df,
+    x="casos",
+    y="muertes",
+    size="casos",
+    color="grupo_edad",
+    hover_name="grupo_edad",
+    title="Relación entre casos, muertes y grupos de edad"
+)
+st.plotly_chart(fig_bubble)
