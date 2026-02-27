@@ -6,18 +6,18 @@ import plotly.express as px
 df = pd.read_csv("CovidDB.csv")
 
 st.title("Tablero Interactivo COVID-19")
-st.write("Columnas en el dataset:", df.columns)
 
-# --- Visualización 1: Mapa coroplético ---
+
+# --- Visualización 1: Mapa coroplético por país ---
 fig_map = px.choropleth(
     df,
-    locations="region",              # Región o país
-    color="cases",                   # Número de casos
-    hover_name="country",            # Nombre del país
-    animation_frame="date",          # Evolución temporal
-    color_continuous_scale="Blues",  # Escala de color más clara
-    labels={"region": "Región", "cases": "Casos"},
-    title="Mapa coroplético de casos por región"
+    locations="country",              # Usamos la columna country
+    color="cases",                    # Número de casos
+    hover_name="region",              # Región interna (se muestra al pasar el mouse)
+    animation_frame="date",           # Evolución temporal
+    color_continuous_scale="Blues",   # Escala de color más clara
+    labels={"country": "País", "cases": "Casos"},
+    title="Mapa coroplético de casos por país"
 )
 st.plotly_chart(fig_map)
 
@@ -33,7 +33,7 @@ fig_heat = px.density_heatmap(
     labels={"date": "Fecha", "cases": "Casos confirmados"},
     title="Mapa de calor temporal de contagios"
 )
-fig_heat.update_traces(texttemplate="%{z}", textfont_size=10)  # Mostrar valores
+fig_heat.update_traces(texttemplate="%{z}", textfont_size=10)
 st.plotly_chart(fig_heat)
 
 # --- Visualización 3: Bubble chart ---
