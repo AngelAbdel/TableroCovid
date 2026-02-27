@@ -63,17 +63,30 @@ fig_heat.update_traces(
 st.plotly_chart(fig_heat)
 
 # --- Visualización 3: Bubble chart ---
+# Agrupar por edad para reducir saturación
+df_bubble = df.groupby("age")[["cases", "deaths"]].sum().reset_index()
+
 fig_bubble = px.scatter(
-    df,
+    df_bubble,
     x="cases",
     y="deaths",
     size="cases",
     color="age",
-    hover_name="region",
+    size_max=40,  # limitar tamaño máximo de burbujas
     labels={"cases": "Casos", "deaths": "Muertes", "age": "Edad"},
-    title="Casos vs Muertes por Grupo de Edad"
+    title="Casos vs Muertes por Grupo de Edad",
+    color_continuous_scale="Viridis"
 )
+
 fig_bubble.update_traces(
-    hovertemplate="Región: %{hovertext}<br>Edad: %{marker.color}<br>Casos: %{x}<br>Muertes: %{y}"
+    hovertemplate="Edad: %{marker.color}<br>Casos: %{x}<br>Muertes: %{y}"
 )
+
+fig_bubble.update_layout(
+    xaxis_title="Casos",
+    yaxis_title="Muertes",
+    font=dict(size=12),
+    margin=dict(l=40, r=40, t=60, b=40)
+)
+
 st.plotly_chart(fig_bubble)
