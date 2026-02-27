@@ -4,18 +4,19 @@ import plotly.express as px
 
 # Cargar datos
 df = pd.read_csv("CovidDB.csv")
-st.write(df["country"].unique())
 st.title("Tablero Interactivo COVID-19")
 
 
 # --- Visualización 1: Mapa coroplético por país ---
 fig_map = px.choropleth(
     df,
-    locations="country",              # Usamos la columna country
+    locations="country",              # Países reconocidos
+    locationmode="country names",     # Le decimos que son nombres de países
     color="cases",                    # Número de casos
-    hover_name="region",              # Región interna (se muestra al pasar el mouse)
+    hover_name="region",              # Región interna
     animation_frame="date",           # Evolución temporal
-    color_continuous_scale="Blues",   # Escala de color más clara
+    color_continuous_scale="Blues",   # Escala de color
+    scope="world",                    # Mostrar el mapa mundial completo
     labels={"country": "País", "cases": "Casos"},
     title="Mapa coroplético de casos por país"
 )
