@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 import numpy as np
 import time
-from streamlit_autorefresh import st_autorefresh
 
 # Cargar datos
 df = pd.read_csv("CovidDB.csv")
@@ -93,26 +92,27 @@ fig_bubble.update_layout(
 )
 
 st.plotly_chart(fig_bubble)
+# --- Visualización 4: Monitoreo en tiempo real (simulado) ---
 
-# --- Visualización 4: Monitoreo en tiempo real ---
 st.header("Monitoreo en tiempo real")
 
-# Inicializar dataset en sesión
-if "data" not in st.session_state:
-    st.session_state.data = pd.DataFrame(columns=["Tiempo", "Casos"])
+# Contenedor vacío para actualizar
+placeholder = st.empty()
 
-# Generar un nuevo dato simulado
-nuevo_dato = {
-    "Tiempo": pd.Timestamp.now(),
-    "Casos": np.random.randint(1000, 5000)  # valor aleatorio simulado
-}
-st.session_state.data = pd.concat([st.session_state.data, pd.DataFrame([nuevo_dato])])
+# Dataset inicial
+data = pd.DataFrame(columns=["Tiempo", "Casos"])
 
-# Mostrar KPI
-st.metric("Casos actuales", nuevo_dato["Casos"])
+# Simulación de flujo de datos (20 actualizaciones)
+for i in range(20):
+    nuevo_dato = {
+        "Tiempo": pd.Timestamp.now(),
+        "Casos": np.random.randint(1000, 5000)  # valor aleatorio simulado
+    }
+    data = pd.concat([data, pd.DataFrame([nuevo_dato])])
 
-# Mostrar gráfico de serie de tiempo
-st.line_chart(st.session_state.data.set_index("Tiempo"))
+    # Actualizar KPI y gráfico dentro del contenedor
+    with placeholder.container():
+        st.metric("Casos actuales", nuevo_dato["Casos"])
+        st.line_chart(data.set_index("Tiempo"))
 
-# Refrescar cada 5 segundos
-st_autorefresh(interval=5000, limit=None, key="refresh")
+    time.sleep(5)  # refresca cada 5 segundos
