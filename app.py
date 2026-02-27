@@ -4,7 +4,7 @@ import plotly.express as px
 
 # Cargar datos
 df = pd.read_csv("CovidDB.csv")
-
+st.write(df["country"].unique())
 st.title("Tablero Interactivo COVID-19")
 
 
